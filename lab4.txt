@@ -1,0 +1,87 @@
+class SampleIterating { 
+ 
+ public static void main(String[] args) {   long start, finish;   TreeNode<String> treeRoot;   start = System.currentTimeMillis();   treeRoot = SampleData.getSet1();   for (TreeNode<String> node : treeRoot) {    String indent = createIndent(node.getLevel());    System.out.println(indent + node.data);   }   finish = System.currentTimeMillis() - start;   System.out.println("\nОбхід першого дерева виконувався: " + finish + " мілісекунд");      start = System.currentTimeMillis();   treeRoot = SampleData.getSet2();   for (TreeNode<String> node : treeRoot) {    String indent = createIndent(node.getLevel());    System.out.println(indent + node.data);   }   finish = System.currentTimeMillis() - start;   System.out.println("\nОбхід другого дерева виконувався: " + finish + " мілісекунд"); 
+    System.out.println("\nДерево для першого виразу:");   treeRoot = SampleData.getSet3();   for (TreeNode<String> node : treeRoot) {    String indent = createIndent(node.getLevel());    System.out.println(indent + node.data);   } 
+ 
+  System.out.println("\nДерево для другого виразу:");   treeRoot = SampleData.getSet4();   for (TreeNode<String> node : treeRoot) {    String indent = createIndent(node.getLevel());    System.out.println(indent + node.data);   }  } 
+ 
+ private static String createIndent(int depth) {   StringBuilder sb = new StringBuilder();   for (int i = 0; i < depth; i++) {    sb.append(' ');   }   return sb.toString();  }   
+ 
+} 
+Файл SampleData.java містить інформацію про задані дерева. 
+class SampleData { 
+ 
+ public static TreeNode<String> getSet1() {   TreeNode<String> root = new TreeNode<String>("a");   {    TreeNode<String> b = root.addChild("b");    {     TreeNode<String> c = b.addChild("c");     TreeNode<String> d = b.addChild("d");    }    TreeNode<String> e = root.addChild("e");    {     TreeNode<String> f = e.addChild("f");     {      TreeNode<String> g = f.addChild("g");      TreeNode<String> h = f.addChild("h");     }    }   }   return root;  } 
+ 
+ public static TreeNode<String> getSet2() {   TreeNode<String> root = new TreeNode<String>("a");   {    TreeNode<String> b = root.addChild("b");    {     TreeNode<String> c = b.addChild("c");     TreeNode<String> d = b.addChild("d");     TreeNode<String> e = b.addChild("e");    }    TreeNode<String> f = root.addChild("f");    {     TreeNode<String> g = f.addChild("g");     TreeNode<String> h = f.addChild("h"); 
+   }   } 
+ 
+  return root;  }    public static TreeNode<String> getSet3() {   TreeNode<String> root = new TreeNode<String>("-");   {    TreeNode<String> op1 = root.addChild("*");    {     TreeNode<String> a = op1.addChild("a");     TreeNode<String> b = op1.addChild("b");    }    TreeNode<String> op2 = root.addChild("/");    {     TreeNode<String> c = op2.addChild("c");     TreeNode<String> d = op2.addChild("d");    }   }   return root;  } 
+ 
+ public static TreeNode<String> getSet4() {   TreeNode<String> root = new TreeNode<String>("/");   {    TreeNode<String> op1 = root.addChild("e"); 
+ 
+   TreeNode<String> op2 = root.addChild("-");    {     TreeNode<String> c = op2.addChild("c");     TreeNode<String> d = op2.addChild("d");    }   }   return root;  } 
+ 
+} 
+Файл TreeNode.java 
+import java.util.Iterator; 
+import java.util.LinkedList; 
+import java.util.List; 
+ 
+public class TreeNode<T> implements Iterable<TreeNode<T>> { 
+ 
+ public T data; 
+ public TreeNode<T> parent; 
+ public List<TreeNode<T>> children; 
+ 
+ public boolean isRoot() { 
+  return parent == null; 
+ } 
+
+ 
+ public boolean isLeaf() { 
+  return children.size() == 0; 
+ } 
+ private List<TreeNode<T>> elementsIndex; 
+ public TreeNode(T data) { 
+  this.data = data; 
+  this.children = new LinkedList<TreeNode<T>>(); 
+  this.elementsIndex = new LinkedList<TreeNode<T>>(); 
+  this.elementsIndex.add(this); 
+ } 
+ public TreeNode<T> addChild(T child) { 
+  TreeNode<T> childNode = new TreeNode<T>(child); 
+  childNode.parent = this; 
+  this.children.add(childNode); 
+  this.registerChildForSearch(childNode); 
+  return childNode; 
+ } 
+ public int getLevel() { 
+  if (this.isRoot()) 
+   return 0; 
+  else 
+   return parent.getLevel() + 1; 
+ } 
+ private void registerChildForSearch(TreeNode<T> node) { 
+  elementsIndex.add(node); 
+  if (parent != null) 
+   parent.registerChildForSearch(node); 
+ } 
+ public TreeNode<T> findTreeNode(Comparable<T> cmp) { 
+  for (TreeNode<T> element : this.elementsIndex) { 
+   T elData = element.data; 
+   if (cmp.compareTo(elData) == 0) 
+    return element; 
+  } 
+  return null; 
+ } 
+ @Override 
+ public String toString() { 
+  return data != null ? data.toString() : "[data null]"; 
+ } 
+ @Override 
+ public Iterator<TreeNode<T>> iterator() { 
+  TreeNodeIter<T> iter = new TreeNodeIter<T>(this); 
+  return iter; 
+ } 
+} 

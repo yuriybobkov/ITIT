@@ -1,0 +1,342 @@
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.ArrayList;;
+
+public class Calculator {
+
+	public static void main(String[] args) {
+	Scanner s = new Scanner(System.in);
+System.out.println("'*' - матричний, '+' - звичайний, '-' - з польським записом"     +"\nВиберіть тип калькулятора: ");
+        String input = s.nextLine();
+        
+        if(input.equals("-")) {
+        	PostfixCalc rpn = new PostfixCalc();
+        	rpn.calculate(input);
+        } else if(input.equals("+")) {
+        	calc(s);
+        } else if(input.equals("*")) {
+        	Matrix matrix = new Matrix();
+        	matrix.matrixCalc(s);
+        } else
+        	System.exit(0);
+        s.close();
+	}
+
+	public static void calc(Scanner s) {
+
+		System.out.print("Введіть перше число: ");
+		double n1 = s.nextDouble();
+		System.out.print("Введіть знак операції: ");
+		String operation = s.next();
+		System.out.print("Введіть друге число: ");
+		double n2 = s.nextDouble();
+		
+		switch (operation)  {
+		case "+":
+			System.out.println("Відповідь: " + (n1 + n2));
+			break;
+			
+		case "-":
+			System.out.println("Відповідь: " + (n1 - n2));
+			break;
+			
+		case "/":
+			System.out.println("Відповідь: " + (n1 / n2));
+			break;
+			
+		case "*":
+			System.out.println("Відповідь: " + (n1 * n2));
+			break;
+			
+		default:
+			System.out.println("Щось не так!");
+		
+		}
+	}
+}
+Файл Matrix.java
+import java.util.Scanner;
+ 
+public class Matrix
+{
+    
+	public static void matrixCalc(Scanner sc) {
+        System.out.print("Введіть кількість рядків: ");  
+        int row = sc.nextInt();
+         
+        System.out.print("Введіть кількість колонок: "); 
+        int cols = sc.nextInt();
+         
+        int[][] matrix1 = new int[row][cols];
+         
+        int[][] matrix2 = new int[row][cols];
+         
+        int[][] result = new int[row][cols];
+         
+        System.out.println("Матриці будуть виглядати так:");
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+            	if((((i+1)%2 == 1 && j > i) || ((i+1)%2 == 0 && i > j ))&& (row > 1) && (cols > 1))
+            		matrix1[i][j] = 0;
+            	else
+            		matrix1[i][j] = 1;
+            	System.out.print(matrix1[i][j]+"\t");
+            }
+            System.out.println();
+        }
+        System.out.println("Введіть дані для матриць замість одиничок.");
+        
+        System.out.println("Дані першої матриці:");
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+            	if( !(((i+1)%2 == 1 && j > i) || ((i+1)%2 == 0 && i > j )))
+            		matrix1[i][j] = sc.nextInt();
+            }
+        }
+         
+        System.out.println("Дані другої матриці:"); 
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+            	if( !((((i+1)%2 == 1 && j > i) || ((i+1)%2 == 0 && i > j ))&& (row > 1) && (cols > 1) ))
+            		matrix2[i][j] = sc.nextInt();
+
+            }
+        }
+
+        System.out.println("Перша матриця = ");
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                System.out.print(matrix1[i][j]+"\t");
+            }
+             
+            System.out.println();
+        }
+         
+        System.out.println("Друга матриця = ");
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                System.out.print(matrix2[i][j]+"\t");
+            }
+             
+            System.out.println();
+        }
+        
+        String err = "";
+        do {
+        System.out.print("Введіть знак операції: ");
+        String operation = sc.next();
+        switch (operation)  {
+        case "+":
+        	addition(row, cols, matrix1, matrix2, result);
+        	err = "";
+        	break;
+        	
+        case "-":
+        	subtraction(row, cols, matrix1, matrix2, result);
+        	err = "";
+        	break;
+        	
+        case "*":
+        	product(row, cols, matrix1, matrix2, result);
+        	err = "";
+        	break;
+        	
+        default:
+        	err = "Неправильний знак!";
+        	System.out.println(err);
+        } 
+        }while (err.equals("Неправильний знак!"));
+
+	}
+	public static void addition(int row, int cols, int[][] matrix1, int[][] matrix2, int[][] sum) 
+    {    
+      
+        System.out.println("Сума = ");
+         
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                sum[i][j] = matrix1[i][j] + matrix2[i][j];
+                 
+                System.out.print(sum[i][j]+"\t");
+            }
+             
+            System.out.println();
+        }
+    }
+	
+	public static void subtraction(int row, int cols, int[][] matrix1, int[][] matrix2, int[][] sub) {
+	
+		System.out.println("Різниця = ");
+		
+		for (int i = 0; i < row; i++)
+		{
+			for (int j = 0; j < cols; j++)
+			{
+				sub[i][j] = matrix1[i][j] - matrix2[i][j];
+				
+				System.out.print(sub[i][j]+"\t");
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void product(int row, int cols, int[][] matrix1, int[][] matrix2, int[][] product) {
+	
+		System.out.println("Добуток = ");
+		
+		for (int i = 0; i < row; i++)
+		{
+			for (int j = 0; j < cols; j++)
+			{
+				for (int k = 0; k < cols; k++)
+				{
+					product[i][j] +=  matrix1[i][k] * matrix2[k][j];
+				}
+			}
+		}
+		
+		for (int i = 0; i < row; i++)
+		{
+			for (int j = 0; j < cols; j++)
+			{
+				System.out.print(product[i][j]+"\t");
+			}
+			
+			System.out.println();
+		}
+	}
+	
+}
+Файл PostfixCalc.java
+import java.util.*;
+
+public class PostfixCalc {
+
+    // Commands
+    private static final String QUIT = "quit";
+    private static final String VAR = "var";
+    private static final String CLEAR = "clear";
+
+    private static ArrayList<String> variableNames = new ArrayList<String>();
+    private static ArrayList<Double> variableValues = new ArrayList<Double>();
+    private static Stack<Double> operationStack = new Stack<Double>();
+
+    public static void main(String[] args) {
+        System.out.println("Postfix calculator with memory by Carissa Gabilheri");
+        Scanner scan = new Scanner(System.in);
+        System.out.print("% ");
+        while(scan.hasNextLine()) {
+            String s = scan.nextLine();
+            calculate(s);
+            System.out.print("% ");
+        }
+    }
+
+    
+    public static void calculate(String s) {
+        ArrayList<String> input = new ArrayList<String>();
+        Collections.addAll(input, s.trim().split(" "));
+        input.removeAll(Arrays.asList(null, ""));
+        if(input.size() == 1) {
+            double d = getValue(s);
+            if(!Double.isNaN(d)) System.out.println("\t" + d);
+            return;
+        }
+
+        boolean hasVariableAssignment = input.contains("=");
+        String var = "";
+        int startIndex = 0;
+        if(hasVariableAssignment) {
+            var = input.get(0);
+            startIndex = 2;
+        } else {
+            startIndex = 0;
+        }
+        for(int i = startIndex; i < input.size(); i++) {
+            String n = input.get(i);
+            if(isOperator(n)) {
+                if(operationStack.size() > 1) {
+                    operationStack.push(doOperation(n));
+                } else {
+                    System.out.println("\tOperation not valid!");
+                    return;
+                }
+            } else {
+                double d = getValue(n);
+                if(!Double.isNaN(d)) {
+                    operationStack.push(d);
+                } else {
+                    operationStack.clear();
+                    return;
+                }
+            }
+        }
+        double result = operationStack.pop();
+        if(operationStack.size() > 0) {
+            System.out.println("\tOperation not valid!");
+            operationStack.clear();
+            return;
+        }
+        if(hasVariableAssignment) {
+            replaceAddValue(var, result);
+        }
+        System.out.println("\t" + result);
+    }
+
+    public static double doOperation(String s) {
+        char op = s.charAt(0);
+        double a = operationStack.pop();
+        double b = operationStack.pop();
+        switch (op) {
+            case '+':
+                return b + a;
+            case '-':
+                return b - a;
+            case '*':
+                return b * a;
+            case '/':
+                return b / a;
+            default:
+                return Double.NaN;
+        }
+    }
+
+    public static double getValue(String s) {
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException ex) {
+            try {
+                return variableValues.get(variableNames.indexOf(s));
+            } catch (Exception e) {
+                System.out.printf("\t%s not found.\n", s);
+                return Double.NaN;
+            }
+        }
+    }
+    public static void replaceAddValue(String var, double value) {
+
+        if(variableNames.contains(var)) {
+            int index = variableNames.indexOf(var);
+            variableValues.set(index, value);
+        } else {
+            variableNames.add(var);
+            variableValues.add(value);
+        }
+    }
+    public static boolean isOperator(String s) {
+        char c = s.charAt(0);
+        return c == '+' || c == '-' || c == '/' || c == '*';
+    }
+}
